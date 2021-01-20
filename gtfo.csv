@@ -1,0 +1,461 @@
+binary,tag
+aria2c,"Command
+ SUID
+ Sudo"
+arp,"File read
+ SUID
+ Sudo"
+ash,"Shell
+ File write
+ SUID
+ Sudo"
+base32,"File read
+ SUID
+ Sudo"
+base64,"File read
+ SUID
+ Sudo"
+bash,"Shell
+ Reverse shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo"
+busybox,"Shell
+ File upload
+ File write
+ File read
+ SUID
+ Sudo"
+cat,"File read
+ SUID
+ Sudo"
+chmod,"SUID
+ Sudo"
+chown,"SUID
+ Sudo"
+chroot,"SUID
+ Sudo"
+cp,"File write
+ File read
+ SUID
+ Sudo"
+csh,"Shell
+ File write
+ SUID
+ Sudo"
+curl,"File upload
+ File download
+ File read
+ SUID
+ Sudo"
+cut,"File read
+ SUID
+ Sudo"
+dash,"Shell
+ File write
+ SUID
+ Sudo"
+date,"File read
+ SUID
+ Sudo"
+dd,"File write
+ File read
+ SUID
+ Sudo"
+dialog,"File read
+ SUID
+ Sudo"
+diff,"File read
+ SUID
+ Sudo"
+dmsetup,"SUID
+ Sudo"
+docker,"Shell
+ File write
+ File read
+ SUID
+ Sudo"
+emacs,"Shell
+ File write
+ File read
+ SUID
+ Sudo"
+env,"Shell
+ SUID
+ Sudo"
+eqn,"File read
+ SUID
+ Sudo"
+expand,"File read
+ SUID
+ Sudo"
+expect,"Shell
+ SUID
+ Sudo"
+file,"File read
+ SUID
+ Sudo"
+find,"Shell
+ SUID
+ Sudo"
+flock,"Shell
+ SUID
+ Sudo"
+fmt,"File read
+ SUID
+ Sudo"
+fold,"File read
+ SUID
+ Sudo"
+gdb,"Shell
+ Reverse shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo
+ Capabilities"
+gimp,"Shell
+ Reverse shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo"
+grep,"File read
+ SUID
+ Sudo"
+gtester,"Shell
+ SUID
+ Sudo"
+hd,"File read
+ SUID
+ Sudo"
+head,"File read
+ SUID
+ Sudo"
+hexdump,"File read
+ SUID
+ Sudo"
+highlight,"File read
+ SUID
+ Sudo"
+iconv,"File write
+ File read
+ SUID
+ Sudo"
+ionice,"Shell
+ SUID
+ Sudo"
+ip,"File read
+ SUID
+ Sudo"
+jjs,"Shell
+ Reverse shell
+ File download
+ File write
+ File read
+ SUID
+ Sudo"
+jq,"File read
+ SUID
+ Sudo"
+jrunscript,"Shell
+ Reverse shell
+ File download
+ File write
+ File read
+ SUID
+ Sudo"
+ksh,"Shell
+ Reverse shell
+ File upload
+ File download
+ File write
+ File read
+ SUID
+ Sudo"
+ksshell,"File read
+ SUID
+ Sudo"
+ld.so,"Shell
+ SUID
+ Sudo"
+less,"Shell
+ File write
+ File read
+ SUID
+ Sudo"
+logsave,"Shell
+ SUID
+ Sudo"
+look,"File read
+ SUID
+ Sudo"
+lwp-download,"File download
+ SUID
+ Sudo"
+lwp-request,"File read
+ SUID
+ Sudo"
+make,"Shell
+ File write
+ SUID
+ Sudo"
+more,"Shell
+ File read
+ SUID
+ Sudo"
+mv,"SUID
+ Sudo"
+nano,"Shell
+ File write
+ File read
+ SUID
+ Sudo"
+nice,"Shell
+ SUID
+ Sudo"
+nl,"File read
+ SUID
+ Sudo"
+node,"Shell
+ Reverse shell
+ Bind shell
+ SUID
+ Sudo
+ Capabilities"
+nohup,"Shell
+ Command
+ SUID
+ Sudo"
+od,"File read
+ SUID
+ Sudo"
+openssl,"Reverse shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo"
+perl,"Shell
+ Reverse shell
+ SUID
+ Sudo
+ Capabilities"
+pg,"Shell
+ File read
+ SUID
+ Sudo"
+php,"Shell
+ Command
+ Reverse shell
+ File upload
+ File download
+ SUID
+ Sudo
+ Capabilities"
+pico,"Shell
+ File write
+ File read
+ SUID
+ Sudo"
+python,"Shell
+ Reverse shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo
+ Capabilities"
+readelf,"File read
+ SUID
+ Sudo"
+restic,"File upload
+ SUID
+ Sudo"
+rlwrap,"Shell
+ File write
+ SUID
+ Sudo"
+rpm,"Shell
+ SUID
+ Sudo"
+rpmquery,"Shell
+ SUID
+ Sudo"
+rsync,"Shell
+ SUID
+ Sudo"
+run-parts,"Shell
+ SUID
+ Sudo"
+rview,"Shell
+ Reverse shell
+ Non-interactive reverse shell
+ Non-interactive bind shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo
+ Capabilities
+ Limited SUID"
+rvim,"Shell
+ Reverse shell
+ Non-interactive reverse shell
+ Non-interactive bind shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo
+ Capabilities
+ Limited SUID"
+sed,"Shell
+ Command
+ File write
+ File read
+ SUID
+ Sudo"
+setarch,"Shell
+ SUID
+ Sudo"
+shuf,"File write
+ File read
+ SUID
+ Sudo"
+soelim,"File read
+ SUID
+ Sudo"
+sort,"File read
+ SUID
+ Sudo"
+start-stop-daemon,"Shell
+ SUID
+ Sudo"
+stdbuf,"Shell
+ SUID
+ Sudo"
+strace,"Shell
+ SUID
+ Sudo"
+strings,"File read
+ SUID
+ Sudo"
+sysctl,"File read
+ SUID
+ Sudo"
+systemctl,"SUID
+ Sudo"
+tac,"File read
+ SUID
+ Sudo"
+tail,"File read
+ SUID
+ Sudo"
+taskset,"Shell
+ SUID
+ Sudo"
+tclsh,"Shell
+ Non-interactive reverse shell
+ SUID
+ Sudo"
+tee,"File write
+ SUID
+ Sudo"
+tftp,"File upload
+ File download
+ SUID
+ Sudo"
+time,"Shell
+ SUID
+ Sudo"
+timeout,"Shell
+ SUID
+ Sudo"
+ul,"File read
+ SUID
+ Sudo"
+unexpand,"File read
+ SUID
+ Sudo"
+uniq,"File read
+ SUID
+ Sudo"
+unshare,"Shell
+ SUID
+ Sudo"
+uudecode,"File read
+ SUID
+ Sudo"
+uuencode,"File read
+ SUID
+ Sudo"
+view,"Shell
+ Reverse shell
+ Non-interactive reverse shell
+ Non-interactive bind shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo
+ Capabilities
+ Limited SUID"
+vim,"Shell
+ Reverse shell
+ Non-interactive reverse shell
+ Non-interactive bind shell
+ File upload
+ File download
+ File write
+ File read
+ Library load
+ SUID
+ Sudo
+ Capabilities
+ Limited SUID"
+watch,"Shell
+ SUID
+ Sudo
+ Limited SUID"
+wget,"File upload
+ File download
+ SUID
+ Sudo"
+xargs,"Shell
+ File read
+ SUID
+ Sudo"
+xxd,"File write
+ File read
+ SUID
+ Sudo"
+xz,"File read
+ SUID
+ Sudo"
+zsh,"Shell
+ SUID
+ Sudo"
+zsoelim,"File read
+ SUID
+ Sudo"

@@ -1,0 +1,296 @@
+<form theme="dark">
+  <label>Osquery Host Explorer</label>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="time" token="field1">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="text" token="instanceId" searchWhenChanged="false">
+      <label>Enter an instanceId</label>
+      <default></default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Heartbeat Monitor</title>
+      <chart>
+        <search>
+          <query>sourcetype=osquery name=heartbeat	decorations.instance_id=$instanceId$
+| timechart span=2m count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="height">100</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Top IPDestination and PortDestinations</title>
+      <table>
+        <search>
+          <query>sourcetype=osquery name=socket_events decorations.instance_id=$instanceId$ NOT columns.action=bind
+| top columns.remote_address columns.remote_port limit=10
+| rename columns.remote_address as remote_address
+| rename columns.remote_port as remote_port</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <format type="color" field="count">
+          <colorPalette type="minMidMax" maxColor="#31A35F" midColor="#A2CC3E" minColor="#FFFFFF"></colorPalette>
+          <scale type="minMidMax" maxType="percentile" maxValue="100" midType="percentile" midValue="50" minType="percentile" minValue="0"></scale>
+        </format>
+      </table>
+    </panel>
+    <panel>
+      <title>Listening Ports</title>
+      <table>
+        <search>
+          <query>sourcetype=osquery  name="pack_snapshots_listening_ports" decorations.instance_id=$instanceId$
+| dedup columns.path columns.port
+| table columns.path columns.port</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Hosts File Entries</title>
+      <table>
+        <search>
+          <query>sourcetype=osquery  name="etc_hosts" OR name="pack_snapshots_etc_hosts_snapshot" decorations.instance_id=$instanceId$
+| dedup columns.hostnames columns.address
+| table columns.hostnames columns.address</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <title>DNS Resolvers</title>
+      <table>
+        <title>Only populates if recent changes were made or host brought online.</title>
+        <search>
+          <query>sourcetype=osquery  name="dns_resolvers" decorations.instance_id=$instanceId$
+| dedup columns.type columns.address
+| table columns.type columns.address</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Top Process Activity on $instanceId$</title>
+      <table>
+        <search>
+          <query> sourcetype=osquery name=process_events decorations.instance_id=$instanceId$
+| top columns.cmdline columns.path by columns.uid 
+| fields + columns.cmdline columns.path columns.uid count
+| sort 10 - count</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <format type="color" field="count">
+          <colorPalette type="minMidMax" maxColor="#31A35F" midColor="#A2CC3E" minColor="#FFFFFF"></colorPalette>
+          <scale type="minMidMax" maxType="percentile" maxValue="100" midType="percentile" midValue="50" minType="percentile" minValue="0"></scale>
+        </format>
+      </table>
+    </panel>
+    <panel>
+      <title>Rare Commands and Binary</title>
+      <table>
+        <search>
+          <query>sourcetype=osquery name=process_events decorations.instance_id=$instanceId$ NOT cron 
+    [| inputlookup gtfo.csv | return 10 $binary ]
+| spath columns.path | rex field=columns.path "(?&lt;binary&gt;[^\/]+$)" 
+| stats count by binary columns.cmdline | where count &lt; 2</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Crontab Entries</title>
+      <table>
+        <search>
+          <query>sourcetype="osquery" name=pack_snapshots_crontab_snapshot  decorations.instance_id=$instanceId$
+| strcat columns.minute " " columns.hour " " columns.day_of_month " " columns.month " " columns.day_of_week expression
+| dedup columns.command expression
+| table columns.command expression</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="count">30</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+    <panel>
+      <title>IP Tables RuleSet</title>
+      <table>
+        <search>
+          <query>sourcetype=osquery name=iptables  "decorations.instance_id"=$instanceId$ | strcat columns.chain " " columns.target " " columns.protocol " " columns.src_ip ":" columns.src_port " " columns.dst_ip ":" columns.dst_port " " columns.policy rule
+| dedup rule
+| table rule</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Network Interfaces</title>
+      <table>
+        <search>
+          <query>sourcetype=osquery name="pack_snapshots_network_interfaces_snapshot" "decorations.instance_id"=$instanceId$  | dedup columns.address columns.interface columns.mac | table columns.address columns.interface columns.mac</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>SSM Sessions over the last 24H</title>
+      <table>
+        <search>
+          <query>sourcetype="aws:cloudtrail" eventName="StartSession"  requestParameters.target=$instanceId$
+| stats count by userIdentity.arn
+| sort - count</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <format type="color" field="count">
+          <colorPalette type="minMidMax" maxColor="#31A35F" midColor="#A2CC3E" minColor="#FFFFFF"></colorPalette>
+          <scale type="minMidMax" maxType="percentile" maxValue="100" midType="percentile" midValue="50" minType="percentile" minValue="0"></scale>
+        </format>
+      </table>
+    </panel>
+    <panel>
+      <title>Active Users within the last 24H</title>
+      <table>
+        <search>
+          <query>sourcetype=osquery name="pack_user_last" decorations.instance_id=$instanceId$
+| sort - _time calendarTime
+| dedup columns.username columns.type
+| table columns.username columns.type columns.tty</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Installed Packages</title>
+      <table>
+        <search>
+          <query>sourcetype=osquery name="deb_packages" decorations.instance_id=$instanceId$
+| dedup columns.name columns.version   | table  columns.name columns.version  | sort  columns.name</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">30</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

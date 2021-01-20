@@ -1,0 +1,10 @@
+/var/log/osquery/osqueryd.results.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 root adm
+    sharedscripts
+}

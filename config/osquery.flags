@@ -1,0 +1,15 @@
+--audit_allow_config=true
+--audit_allow_sockets=true
+--audit_persist=true
+--disable_audit=false
+--disable_events=false
+--events_expiry=1
+--events_max=50000
+--events_optimize=true
+--host_identifier=uuid
+--pack_delimiter=_
+--verbose=false
+--schedule_splay_percent=10
+--logger_snapshot_event_type=true
+--watchdog_memory_limit=350
+--watchdog_utilization_limit=30

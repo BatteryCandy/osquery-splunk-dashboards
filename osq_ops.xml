@@ -1,0 +1,138 @@
+<form theme="dark">
+  <label>Osquery Operations</label>
+  <description>Last 24H Activity</description>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="account">
+      <label>Select Account to Drill down</label>
+      <fieldForLabel>name</fieldForLabel>
+      <fieldForValue>id</fieldForValue>
+      <search>
+        <query>sourcetype=osquery | stats dc(decorations.account_id) as accounts | fields accounts</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title># Instances Seen Across Every Account</title>
+      <single>
+        <search>
+          <query>sourcetype=osquery name="heartbeat"
+| fields decorations.instance_id decorations.account_id
+| stats dc(decorations.instance_id) as NumHosts by decorations.account_id
+          </query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">569</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">1</option>
+        <option name="trellis.scales.shared">0</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Avg Heartbeat Monitor for $account$</title>
+      <single>
+        <title>Value close to 1 is good</title>
+        <search>
+          <query>sourcetype=osquery name=heartbeat decorations.account_id=$account$
+| stats count by "decorations.instance_id" 
+| eval avgBPM=(count/24/60)
+
+
+| stats max(avgBPM) as BPM by decorations.instance_id</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">all</option>
+        <option name="height">575</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0xdc4e41","0xf8be34","0xf1813f","0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0.5,0.7,0.89,1]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">1</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">/app/search/osquery_host_explorer?form.instanceId=$trellis.value$</link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <title>HeartBeat Counter for $account$</title>
+      <chart>
+        <title>Lots of drops could be an issue with osquery performance</title>
+        <search>
+          <query>index=security sourcetype=osquery name=heartbeat decorations.account_id=$account$	
+| timechart span=10m count  by decorations.instance_id useother=false limit=200</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="height">563</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Event Counts by Query (Sampling 1:1000)</title>
+      <chart>
+        <search>
+          <query>sourcetype=osquery  decorations.account_id=$account$
+| fields name
+| top limit=10 name</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1000</sampleRatio>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="height">362</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Noisy Network Events</title>
+      <table>
+        <title>Sampling 1:1000</title>
+        <search>
+          <query>sourcetype=osquery name=socket_events decorations.account_id=$account$
+| stats count dc(decorations.instance_id) as numInstances by columns.remote_address columns.remote_port
+| sort - count | head 10</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1000</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>
